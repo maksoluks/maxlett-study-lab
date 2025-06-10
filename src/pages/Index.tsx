@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,14 +26,14 @@ const Index = () => {
   const [sets, setSets] = useState<FlashcardSetData[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [activeSet, setActiveSet] = useState<FlashcardSetData | null>(null);
-  const [studyMode, setStudyMode] = useState<'flashcards' | 'learn' | null>(null);
+  const [studyMode, setStudyMode] = useState<'flashcards' | 'learn' | 'write' | 'match' | 'test' | null>(null);
 
   const handleCreateSet = (newSet: FlashcardSetData) => {
     setSets(prev => [...prev, newSet]);
     setIsCreateModalOpen(false);
   };
 
-  const handleStudySet = (set: FlashcardSetData, mode: 'flashcards' | 'learn') => {
+  const handleStudySet = (set: FlashcardSetData, mode: 'flashcards' | 'learn' | 'write' | 'match' | 'test') => {
     setActiveSet(set);
     setStudyMode(mode);
   };

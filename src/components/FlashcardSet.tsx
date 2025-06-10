@@ -1,12 +1,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Brain } from "lucide-react";
+import { BookOpen, Brain, PenTool, Shuffle, FileText } from "lucide-react";
 import { FlashcardSetData } from "@/pages/Index";
 
 interface FlashcardSetProps {
   set: FlashcardSetData;
-  onStudy: (set: FlashcardSetData, mode: 'flashcards' | 'learn') => void;
+  onStudy: (set: FlashcardSetData, mode: 'flashcards' | 'learn' | 'write' | 'match' | 'test') => void;
 }
 
 export const FlashcardSet = ({ set, onStudy }: FlashcardSetProps) => {
@@ -35,6 +35,35 @@ export const FlashcardSet = ({ set, onStudy }: FlashcardSetProps) => {
           <Brain className="h-4 w-4 mr-2" />
           Learn Mode
         </Button>
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            onClick={() => onStudy(set, 'write')}
+            variant="outline"
+            size="sm"
+            className="border-purple-200 hover:bg-purple-50 text-purple-700"
+          >
+            <PenTool className="h-3 w-3 mr-1" />
+            Write
+          </Button>
+          <Button
+            onClick={() => onStudy(set, 'match')}
+            variant="outline"
+            size="sm"
+            className="border-green-200 hover:bg-green-50 text-green-700"
+          >
+            <Shuffle className="h-3 w-3 mr-1" />
+            Match
+          </Button>
+          <Button
+            onClick={() => onStudy(set, 'test')}
+            variant="outline"
+            size="sm"
+            className="border-orange-200 hover:bg-orange-50 text-orange-700"
+          >
+            <FileText className="h-3 w-3 mr-1" />
+            Test
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
