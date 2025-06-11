@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -174,36 +173,11 @@ export const CreateSetModal = ({ isOpen, onClose, onCreateSet }: CreateSetModalP
             </div>
           </div>
 
-          <Tabs defaultValue="import" className="w-full">
+          <Tabs defaultValue="manual" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="import">Import Text</TabsTrigger>
               <TabsTrigger value="manual">Add Manually</TabsTrigger>
+              <TabsTrigger value="import">Import Text</TabsTrigger>
             </TabsList>
-
-            <TabsContent value="import" className="space-y-4">
-              <div>
-                <Label htmlFor="import-text">
-                  Paste your flashcards (one per line: front text [TAB] back text)
-                </Label>
-                <Textarea
-                  id="import-text"
-                  value={importText}
-                  onChange={(e) => setImportText(e.target.value)}
-                  placeholder={`hello\thola\ngoodbye\tadiós\nthank you\tgracias`}
-                  className="h-48 font-mono text-sm"
-                />
-                <p className="text-sm text-gray-500 mt-2">
-                  Format: Use TAB to separate front and back of each card
-                </p>
-              </div>
-              <Button
-                onClick={handleCreateFromImport}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                disabled={!title.trim() || !importText.trim()}
-              >
-                Create Set from Import
-              </Button>
-            </TabsContent>
 
             <TabsContent value="manual" className="space-y-4">
               <div className="space-y-3 max-h-60 overflow-y-auto">
@@ -260,6 +234,31 @@ export const CreateSetModal = ({ isOpen, onClose, onCreateSet }: CreateSetModalP
                   Create Set
                 </Button>
               </div>
+            </TabsContent>
+
+            <TabsContent value="import" className="space-y-4">
+              <div>
+                <Label htmlFor="import-text">
+                  Paste your flashcards (one per line: front text [TAB] back text)
+                </Label>
+                <Textarea
+                  id="import-text"
+                  value={importText}
+                  onChange={(e) => setImportText(e.target.value)}
+                  placeholder={`hello\thola\ngoodbye\tadiós\nthank you\tgracias`}
+                  className="h-48 font-mono text-sm"
+                />
+                <p className="text-sm text-gray-500 mt-2">
+                  Format: Use TAB to separate front and back of each card
+                </p>
+              </div>
+              <Button
+                onClick={handleCreateFromImport}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={!title.trim() || !importText.trim()}
+              >
+                Create Set from Import
+              </Button>
             </TabsContent>
           </Tabs>
         </div>

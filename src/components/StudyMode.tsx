@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, RotateCcw, CheckCircle, XCircle, Shuffle } from "lucide-react";
+import { ArrowLeft, RotateCcw, CheckCircle, XCircle, Shuffle, Edit } from "lucide-react";
 import { FlashcardSetData, Flashcard } from "@/pages/Index";
 
 interface StudyModeProps {
@@ -38,6 +38,9 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
   const [userInput, setUserInput] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFront, setEditFront] = useState("");
+  const [editBack, setEditBack] = useState("");
   
   // Match game state
   const [matchItems, setMatchItems] = useState<MatchItem[]>([]);
@@ -66,6 +69,7 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
     setMatches(new Set());
     setCurrentQuestionIndex(0);
     setTestResults(null);
+    setIsEditing(false);
 
     if (mode === 'match') {
       initializeMatchGame();
@@ -139,6 +143,32 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
     });
     
     setTestQuestions(questions.sort(() => Math.random() - 0.5));
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditFront(currentCard.front);
+    setEditBack(currentCard.back);
+  };
+
+  const handleSaveEdit = () => {
+    // Update the card in the set
+    const updatedCards = set.cards.map(card => 
+      card.id === currentCard.id 
+        ? { ...card, front: editFront.trim(), back: editBack.trim() }
+        : card
+    );
+    
+    // Update the set with new cards
+    set.cards = updatedCards;
+    
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditFront("");
+    setEditBack("");
   };
 
   const handleNext = () => {
@@ -259,6 +289,7 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
     setMatches(new Set());
     setCurrentQuestionIndex(0);
     setTestResults(null);
+    setIsEditing(false);
     
     if (mode === 'match') {
       initializeMatchGame();
@@ -464,64 +495,113 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
               className={`h-80 transition-transform duration-300 hover:scale-105 bg-white/90 backdrop-blur-sm border border-blue-100 ${
                 mode === 'write' ? '' : 'cursor-pointer'
               }`}
-              onClick={mode === 'write' ? undefined : handleFlip}
+              onClick={mode === 'write' || isEditing ? undefined : handleFlip}
             >
               <CardContent className="h-full flex items-center justify-center p-8">
                 <div className="text-center w-full">
-                  <div className="text-sm text-blue-600 mb-4 font-medium">
-                    {mode === 'write' ? 'Question' : isFlipped ? 'Answer' : 'Question'}
-                  </div>
-                  <div className="text-2xl text-gray-900 leading-relaxed mb-6">
-                    {currentCard.front}
-                  </div>
-                  
-                  {mode === 'write' && !showResult && (
+                  {isEditing ? (
                     <div className="space-y-4">
-                      <Input
-                        value={userInput}
-                        onChange={(e) => setUserInput(e.target.value)}
-                        placeholder="Type your answer..."
-                        className="text-center text-lg"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && userInput.trim()) {
-                            handleWriteSubmit();
-                          }
-                        }}
-                      />
-                      <Button
-                        onClick={handleWriteSubmit}
-                        disabled={!userInput.trim()}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        Submit Answer
-                      </Button>
-                    </div>
-                  )}
-                  
-                  {mode === 'write' && showResult && (
-                    <div className="space-y-4">
-                      <div className={`text-lg font-medium ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                        {isCorrect ? 'Correct!' : 'Incorrect'}
+                      <div className="text-sm text-blue-600 mb-4 font-medium">
+                        Edit Flashcard
                       </div>
-                      <div className="text-gray-700">
-                        <div className="text-sm text-gray-500">Your answer:</div>
-                        <div className="mb-2">{userInput}</div>
-                        <div className="text-sm text-gray-500">Correct answer:</div>
-                        <div>{currentCard.back}</div>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-sm text-gray-600">Front:</label>
+                          <Input
+                            value={editFront}
+                            onChange={(e) => setEditFront(e.target.value)}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-600">Back:</label>
+                          <Input
+                            value={editBack}
+                            onChange={(e) => setEditBack(e.target.value)}
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-2 justify-center">
+                        <Button onClick={handleSaveEdit} size="sm">
+                          Save
+                        </Button>
+                        <Button onClick={handleCancelEdit} variant="outline" size="sm">
+                          Cancel
+                        </Button>
                       </div>
                     </div>
-                  )}
-                  
-                  {(mode === 'flashcards' || mode === 'learn') && isFlipped && (
-                    <div className="text-2xl text-gray-900 leading-relaxed">
-                      {currentCard.back}
-                    </div>
-                  )}
-                  
-                  {(mode === 'flashcards' || mode === 'learn') && !isFlipped && (
-                    <div className="text-sm text-gray-500 mt-4">
-                      Click to reveal answer
-                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-sm text-blue-600 font-medium">
+                          {mode === 'write' ? 'Question' : isFlipped ? 'Answer' : 'Question'}
+                        </div>
+                        {mode === 'flashcards' && (
+                          <Button
+                            onClick={handleEdit}
+                            variant="outline"
+                            size="sm"
+                            className="ml-auto"
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </Button>
+                        )}
+                      </div>
+                      <div className="text-2xl text-gray-900 leading-relaxed mb-6">
+                        {currentCard.front}
+                      </div>
+                      
+                      {mode === 'write' && !showResult && (
+                        <div className="space-y-4">
+                          <Input
+                            value={userInput}
+                            onChange={(e) => setUserInput(e.target.value)}
+                            placeholder="Type your answer..."
+                            className="text-center text-lg"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && userInput.trim()) {
+                                handleWriteSubmit();
+                              }
+                            }}
+                          />
+                          <Button
+                            onClick={handleWriteSubmit}
+                            disabled={!userInput.trim()}
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            Submit Answer
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {mode === 'write' && showResult && (
+                        <div className="space-y-4">
+                          <div className={`text-lg font-medium ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                            {isCorrect ? 'Correct!' : 'Incorrect'}
+                          </div>
+                          <div className="text-gray-700">
+                            <div className="text-sm text-gray-500">Your answer:</div>
+                            <div className="mb-2">{userInput}</div>
+                            <div className="text-sm text-gray-500">Correct answer:</div>
+                            <div>{currentCard.back}</div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {(mode === 'flashcards' || mode === 'learn') && isFlipped && (
+                        <div className="text-2xl text-gray-900 leading-relaxed">
+                          {currentCard.back}
+                        </div>
+                      )}
+                      
+                      {(mode === 'flashcards' || mode === 'learn') && !isFlipped && (
+                        <div className="text-sm text-gray-500 mt-4">
+                          Click to reveal answer
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </CardContent>
@@ -529,7 +609,7 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
 
             {/* Controls */}
             <div className="mt-6 space-y-4">
-              {mode === 'flashcards' && (
+              {mode === 'flashcards' && !isEditing && (
                 <div className="flex gap-3 justify-center">
                   <Button
                     variant="outline"
