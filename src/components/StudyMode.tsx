@@ -535,7 +535,7 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
                     <>
                       <div className="flex items-center justify-between mb-4">
                         <div className="text-sm text-blue-600 font-medium">
-                          {mode === 'write' ? 'Question' : isFlipped ? 'Answer' : 'Question'}
+                          {mode === 'write' ? 'Question' : isFlipped ? 'Definition' : 'Term'}
                         </div>
                         {mode === 'flashcards' && (
                           <Button
@@ -550,7 +550,7 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
                         )}
                       </div>
                       <div className="text-2xl text-gray-900 leading-relaxed mb-6">
-                        {currentCard.front}
+                        {(mode === 'flashcards' || mode === 'learn') && isFlipped ? currentCard.back : currentCard.front}
                       </div>
                       
                       {mode === 'write' && !showResult && (
@@ -590,15 +590,9 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
                         </div>
                       )}
                       
-                      {(mode === 'flashcards' || mode === 'learn') && isFlipped && (
-                        <div className="text-2xl text-gray-900 leading-relaxed">
-                          {currentCard.back}
-                        </div>
-                      )}
-                      
                       {(mode === 'flashcards' || mode === 'learn') && !isFlipped && (
                         <div className="text-sm text-gray-500 mt-4">
-                          Click to reveal answer
+                          Click to reveal definition
                         </div>
                       )}
                     </>
@@ -623,7 +617,7 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
                     onClick={handleFlip}
                     className="flex-1 max-w-32 bg-blue-600 hover:bg-blue-700"
                   >
-                    {isFlipped ? 'Show Question' : 'Show Answer'}
+                    {isFlipped ? 'Show Term' : 'Show Definition'}
                   </Button>
                   <Button
                     onClick={handleNext}
@@ -661,7 +655,7 @@ export const StudyMode = ({ set, mode, onBack }: StudyModeProps) => {
                     onClick={handleFlip}
                     className="px-8 bg-blue-600 hover:bg-blue-700"
                   >
-                    Show Answer
+                    Show Definition
                   </Button>
                 </div>
               )}

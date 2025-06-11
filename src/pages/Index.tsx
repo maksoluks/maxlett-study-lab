@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,8 +63,8 @@ const Index = () => {
             <div className="flex items-center space-x-2">
               <BookOpen className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl">
-                <span className="font-bold text-gray-900">Max</span>
-                <span className="font-light text-blue-600">Lett</span>
+                <span className="font-bold text-gray-900">Maximum</span>
+                <span className="font-light text-blue-600">Learning</span>
               </h1>
             </div>
             <Button
@@ -83,7 +84,7 @@ const Index = () => {
           <div className="text-center py-16">
             <Brain className="h-16 w-16 text-blue-400 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Welcome to MaxLett
+              Welcome to MaximumLearning
             </h2>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
               Create your first flashcard set and start learning smarter. Import from text, 
